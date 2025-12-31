@@ -1,0 +1,10 @@
+,Age,Gender,Surgery Type,Weight (kg),Preop mYPAS score,Duration of surgery (mins),Time to emergence (mins),Airway Device Removed,Actual_Outcome,AI_Prediction,AI_Confidence
+27,3.0,male,tubes + t&a,15.0,50.0,37,21,deep,1,1,70.0
+16,7.0,male,tubes +a,45.1,22.92,17,60,deep,0,0,41.0
+12,6.0,male,t&a,35.0,33.33,25,86,deep,0,1,52.0
+22,8.0,female,t&a,25.2,22.92,29,38,deep,0,0,40.0
+8,8.0,male,t&a,37.0,33.33,19,60,deep,0,0,40.0
+9,5.0,male,t&a,18.0,37.5,23,54,deep,0,1,65.0
+21,6.0,female,adenoidectomy,47.2,33.33,8,68,deep,0,0,31.0
+0,7.0,male,t&a,26.2,43.75,25,49,deep,0,1,70.0
+26,1.8333333333333333,female,tubes,13.2,27.08,8,31,awake,0,1,75.0
