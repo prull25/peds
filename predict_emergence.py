@@ -259,16 +259,20 @@ participant_ids = df[participant_col] if participant_col in df.columns else df.i
 
 def generate_oof_correctness(target_series):
     if target_series is None:
-        return pd.Series(index=df.index, data=np.nan)
+        print("[WARN] Missing target values for AI correctness.")
+        return pd.Series(pd.NA, index=df.index, dtype="object")
     valid_mask = target_series.notna()
     if valid_mask.sum() == 0:
-        return pd.Series(index=df.index, data=np.nan)
+        print("[WARN] Target values are empty; AI correctness not computed.")
+        return pd.Series(pd.NA, index=df.index, dtype="object")
     target_valid = target_series[valid_mask]
     if target_valid.nunique() < 2:
-        return pd.Series(index=df.index, data=np.nan)
+        print("[WARN] Target has a single class; AI correctness not computed.")
+        return pd.Series(pd.NA, index=df.index, dtype="object")
     min_class = target_valid.value_counts().min()
     if min_class < 2:
-        return pd.Series(index=df.index, data=np.nan)
+        print("[WARN] Not enough samples per class for out-of-fold correctness.")
+        return pd.Series(pd.NA, index=df.index, dtype="object")
 
     n_splits = min(5, int(min_class))
     cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
@@ -286,8 +290,10 @@ def generate_oof_correctness(target_series):
     )[:, 1]
     oof_pred = (oof_probs >= 0.5).astype(int)
     correctness = np.where(oof_pred == target_valid.astype(int).to_numpy(), "Yes", "No")
-    correctness_series = pd.Series(index=df.index, data=np.nan)
-    correctness_series.loc[valid_mask] = correctness
+    correctness_series = pd.Series(pd.NA, index=df.index, dtype="object")
+    correctness_series.loc[valid_mask] = pd.Series(
+        correctness, index=target_valid.index, dtype="object"
+    )
     return correctness_series
 
 

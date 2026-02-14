@@ -26,11 +26,13 @@ def coerce_numeric_columns(dataframe, columns):
 def generate_oof_correctness(features, target, participant_ids):
     valid_mask = target.notna()
     if valid_mask.sum() == 0 or target[valid_mask].nunique() < 2:
-        return pd.Series(index=participant_ids, data=np.nan)
+        print("[WARN] Target values missing or single-class; AI correctness not computed.")
+        return pd.Series(pd.NA, index=participant_ids, dtype="object")
 
     min_class = target[valid_mask].value_counts().min()
     if min_class < 2:
-        return pd.Series(index=participant_ids, data=np.nan)
+        print("[WARN] Not enough samples per class for out-of-fold correctness.")
+        return pd.Series(pd.NA, index=participant_ids, dtype="object")
 
     n_splits = min(5, int(min_class))
     cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
@@ -50,8 +52,10 @@ def generate_oof_correctness(features, target, participant_ids):
     correctness = np.where(
         oof_pred == target[valid_mask].astype(int).to_numpy(), "Yes", "No"
     )
-    correctness_series = pd.Series(index=participant_ids.index, data=np.nan)
-    correctness_series.loc[valid_mask] = correctness
+    correctness_series = pd.Series(pd.NA, index=participant_ids.index, dtype="object")
+    correctness_series.loc[valid_mask] = pd.Series(
+        correctness, index=target[valid_mask].index, dtype="object"
+    )
     return correctness_series
 
 
