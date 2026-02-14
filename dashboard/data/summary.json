@@ -1,0 +1,79 @@
+{
+  "generated_at": "2026-02-14T21:14:07.503693+00:00",
+  "cohort": {
+    "total_patients": 92,
+    "ed1_available": false,
+    "ed1_columns": []
+  },
+  "primary_target": "PAED > 12 at 5 mins",
+  "targets": [
+    {
+      "available": true,
+      "target_name": "PAED > 12 at 5 mins",
+      "output_suffix": "PAED12_5MIN",
+      "prevalence": 0.17391304347826086,
+      "train_n": 64,
+      "test_n": 28,
+      "accuracy": 0.9285714285714286,
+      "sensitivity": 0.6,
+      "specificity": 1.0,
+      "ppv": 1.0,
+      "npv": 0.92,
+      "tp": 3,
+      "fp": 0,
+      "tn": 23,
+      "fn": 2,
+      "roc_auc": 1.0,
+      "avg_precision": 1.0,
+      "clinician_test_metrics": {
+        "accuracy": 0.8214285714285714,
+        "sensitivity": 1.0,
+        "specificity": 0.782608695652174,
+        "ppv": 0.5,
+        "npv": 1.0,
+        "tp": 5,
+        "fp": 5,
+        "tn": 18,
+        "fn": 0,
+        "n": 28
+      },
+      "assets": {
+        "confusion_matrix": "02_Confusion_Matrix_PAED12_5MIN.png",
+        "roc_curve": "03_ROC_Curve_PAED12_5MIN.png",
+        "precision_recall": "06_Precision_Recall_PAED12_5MIN.png",
+        "feature_importance": "04_Feature_Importance_PAED12_5MIN.png",
+        "performance_summary": "07_Performance_Summary_PAED12_5MIN.png",
+        "risk_distribution": "08_Predicted_Risk_Distribution_PAED12_5MIN.png",
+        "ai_vs_clinician": "09_AI_vs_Anesthesiologist_PAED12_5MIN.png",
+        "scoreboard": "05_Patient_Scoreboard_PAED12_5MIN.csv"
+      }
+    },
+    {
+      "available": false,
+      "message": "Target ED I \u2265 6 not available in this dataset."
+    }
+  ],
+  "assets_common": [
+    "01_Cohort_Overview.png",
+    "02_Target_Prevalence.png",
+    "03_Feature_Correlations.png"
+  ],
+  "comparison": {
+    "clinician_full_metrics": {
+      "accuracy": 0.8152173913043478,
+      "sensitivity": 1.0,
+      "specificity": 0.7763157894736842,
+      "ppv": 0.48484848484848486,
+      "npv": 1.0,
+      "tp": 16,
+      "fp": 17,
+      "tn": 59,
+      "fn": 0,
+      "n": 92
+    }
+  },
+  "report": {
+    "text_file": "00_Study_Report.txt",
+    "pdf_file": "00_Study_Report.pdf"
+  }
+}
