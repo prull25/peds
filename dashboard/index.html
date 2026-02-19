@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pediatric Emergence Delirium Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Clinical Analytics Dashboard</p>
+        <h1>Pediatric Emergence Delirium (ED) Insights</h1>
+        <p class="subtitle">
+          Model performance, cohort characteristics, and predicted risk insights from
+          the latest dataset run.
+        </p>
+        <div class="hero-meta">
+          <span id="updatedAt">Updated —</span>
+          <span class="badge" id="targetBadge">Target</span>
+          <span class="badge neutral" id="ed1Badge">ED I status</span>
+        </div>
+      </div>
+      <div class="hero-card" id="summaryCard">
+        <h3>Snapshot</h3>
+        <div class="summary-grid">
+          <div>
+            <p class="label">Total Patients</p>
+            <p class="value" id="totalPatients">—</p>
+          </div>
+          <div>
+            <p class="label">Prevalence</p>
+            <p class="value" id="prevalence">—</p>
+          </div>
+          <div>
+            <p class="label">ROC AUC</p>
+            <p class="value" id="rocAuc">—</p>
+          </div>
+          <div>
+            <p class="label">Avg Precision</p>
+            <p class="value" id="avgPrecision">—</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <h2>Performance Highlights</h2>
+        <div class="kpi-grid" id="kpiGrid"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <h2>AI vs Anesthesiologist (Primary Endpoint)</h2>
+          <p class="caption">Comparative performance on PAED > 12 at 5 mins.</p>
+        </div>
+        <div class="kpi-grid" id="comparisonGrid"></div>
+      </section>
+
+      <section class="section">
+        <h2>Cohort & Target Overview</h2>
+        <div class="image-grid" id="overviewImages"></div>
+      </section>
+
+      <section class="section">
+        <h2>Model Diagnostics</h2>
+        <div class="image-grid" id="diagnosticImages"></div>
+      </section>
+
+      <section class="section">
+        <h2>Clinician vs AI Visual Comparison</h2>
+        <div class="image-grid" id="comparisonImages"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <h2>Patient-Level Predictions</h2>
+          <div class="controls">
+            <input
+              type="text"
+              id="tableFilter"
+              placeholder="Filter by surgery type, gender, or outcome"
+            />
+            <button id="resetFilter">Reset</button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <p class="caption">Showing top 25 rows by predicted confidence.</p>
+      </section>
+
+      <section class="section">
+        <h2>Full Analysis Report</h2>
+        <div class="report-card">
+          <pre id="reportText">Loading report...</pre>
+          <div class="download-links">
+            <a class="btn" href="data/00_Study_Report.pdf" target="_blank" rel="noopener">
+              Download PDF
+            </a>
+            <a class="btn ghost" href="data/00_Study_Report.txt" target="_blank" rel="noopener">
+              Download TXT
+            </a>
+            <a class="btn ghost" href="data/peds_data_92.csv" target="_blank" rel="noopener">
+              Download Dataset (CSV)
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Pediatric ED Dashboard • Generated for clinical review</p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
