@@ -244,6 +244,21 @@ else:
 # so df.insert(len(base_columns), ...) places "AI Correct?" at the correct position.
 base_columns = df.columns.tolist()
 
+# ---- EXTENDED DIAGNOSTICS ----
+print("[DIAG] ---- TARGET & SPLIT DIAGNOSTICS ----")
+_y_diag = df["ED_Target_PAED12_5min"]
+_pos = int(_y_diag.sum())
+_neg = int((1 - _y_diag).sum())
+_total = len(_y_diag)
+print(f"[DIAG] ED_Target_PAED12_5min  -> total={_total}  positive(ED)={_pos}  negative={_neg}  prevalence={_pos/_total:.1%}")
+print(f"[DIAG] PAED score at 5 mins   -> min={df['PAED score at 5 mins'].min():.1f}  max={df['PAED score at 5 mins'].max():.1f}  median={df['PAED score at 5 mins'].median():.1f}")
+# Simulate the same train/test split to show how many positives land in test
+from sklearn.model_selection import train_test_split as _tts
+_X_tmp, _, _y_train_tmp, _y_test_tmp = _tts(_y_diag, _y_diag, test_size=0.3, random_state=42, stratify=_y_diag)
+print(f"[DIAG] Simulated test split    -> test_n={len(_y_test_tmp)}  test_positive={int(_y_test_tmp.sum())}  test_negative={int((1-_y_test_tmp).sum())}")
+print(f"[DIAG] Anesthesiologist_Prediction NaN count: {df['Anesthesiologist_Prediction'].isna().sum()}")
+print("[DIAG] ------------------------------------------")
+
 # ==========================================
 # 2. MODEL TRAINING
 # ==========================================
@@ -353,6 +368,10 @@ def train_evaluate_target(target_name, y, output_suffix, clinician_pred=None):
     ppv = tp / (tp + fp) if (tp + fp) > 0 else 0
     npv = tn / (tn + fn) if (tn + fn) > 0 else 0
     acc = accuracy_score(y_test, y_pred)
+
+    print(f"[DIAG] [{output_suffix}] y_test distribution: positive={int(y_test.sum())} negative={int((1-y_test).sum())}")
+    print(f"[DIAG] [{output_suffix}] confusion matrix: TP={tp} FP={fp} TN={tn} FN={fn}")
+    print(f"[DIAG] [{output_suffix}] sensitivity={sensitivity:.2%}  specificity={specificity:.2%}  accuracy={acc:.2%}")
 
     roc_auc = None
     if len(np.unique(y_test)) > 1:
