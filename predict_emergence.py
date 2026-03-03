@@ -38,6 +38,14 @@ _df_columns = [str(col).strip() for col in df.columns]
 df.columns = _df_columns
 
 participant_col = "Participant Number"
+
+# Drop blank/empty rows that Excel may include
+df.dropna(how="all", inplace=True)
+_core_cols = [c for c in ["Age", "Gender", "PAED score at 5 mins"] if c in df.columns]
+if _core_cols:
+    df.dropna(subset=_core_cols, how="all", inplace=True)
+df.reset_index(drop=True, inplace=True)
+
 if participant_col in df.columns:
     df[participant_col] = df[participant_col].astype(str)
 
