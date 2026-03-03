@@ -49,8 +49,6 @@ df.reset_index(drop=True, inplace=True)
 if participant_col in df.columns:
     df[participant_col] = df[participant_col].astype(str)
 
-base_columns = df.columns.tolist()
-
 
 def apply_plot_style():
     plt.style.use("seaborn-v0_8")
@@ -104,6 +102,16 @@ if "Age" in df.columns:
     df["Age"] = df["Age"].apply(parse_peds_age)
 
 coerce_numeric_columns(df, numeric_cols)
+
+# DIAGNOSTIC: warn if PAED score at 5 mins has too few unique values after coercion
+_paed_diag_col = "PAED score at 5 mins"
+if _paed_diag_col in df.columns:
+    _n_unique = df[_paed_diag_col].nunique(dropna=True)
+    _n_nan = df[_paed_diag_col].isna().sum()
+    print(f"[DIAG] '{_paed_diag_col}': {_n_unique} unique values, {_n_nan} NaN before fillna")
+    if _n_unique <= 1:
+        print(f"[WARN] '{_paed_diag_col}' has only {_n_unique} unique value(s) after coercion — "
+              f"check that the column is numeric in the source file!")
 
 for col in numeric_cols:
     if col in df.columns:
@@ -231,6 +239,10 @@ if ed1_available:
         ed1_available = False
 else:
     df["ED_Target_ED1_6"] = np.nan
+
+# Capture base_columns here, after all target/derived columns exist,
+# so df.insert(len(base_columns), ...) places "AI Correct?" at the correct position.
+base_columns = df.columns.tolist()
 
 # ==========================================
 # 2. MODEL TRAINING
