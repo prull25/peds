@@ -361,13 +361,10 @@ def train_evaluate_target(target_name, y, output_suffix, clinician_pred=None):
 
     y_probs = rf.predict_proba(X_test)[:, 1]
 
-    # Use a lower threshold reflecting true prevalence (~18%) rather than
-    # the default 0.5, which causes the model to predict all-negative when
-    # positives are rare — producing sensitivity=0 despite high accuracy.
-    prevalence = y_train.mean()
-    threshold = max(0.2, min(0.4, prevalence))
+    # Threshold set to 0.42 per study protocol.
+    threshold = 0.42
     y_pred = (y_probs >= threshold).astype(int)
-    print(f"[DIAG] [{output_suffix}] train prevalence={prevalence:.2%}  classification threshold={threshold:.2f}")
+    print(f"[DIAG] [{output_suffix}] classification threshold={threshold:.2f}")
 
     tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
     sensitivity = tp / (tp + fn) if (tp + fn) > 0 else 0
