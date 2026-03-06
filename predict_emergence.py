@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
-from sklearn.model_selection import StratifiedKFold, cross_val_predict, train_test_split
+from sklearn.model_selection import StratifiedKFold, cross_val_predict, train_test_split, RandomizedSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
     accuracy_score,
@@ -18,6 +18,7 @@ from sklearn.metrics import (
     PrecisionRecallDisplay,
     average_precision_score,
 )
+import re
 import sys
 
 # ==========================================
@@ -120,6 +121,58 @@ for col in numeric_cols:
 for col in ["Gender", "Surgery Type", "Airway Device Removed"]:
     if col in df.columns:
         df[col] = df[col].astype(str).str.strip().str.lower()
+
+# ==========================================
+# FEATURE ENGINEERING — MEDICATION VARIABLES
+# ==========================================
+def _get_maintenance(val):
+    s = str(val).lower().strip()
+    if "sevo" in s: return "sevoflurane"
+    if "propofol" in s: return "propofol"
+    return "other"
+
+def _parse_dex_dose(val):
+    s = str(val).lower().strip()
+    if s in ["nan", "none", ""]: return 0.0
+    matches = re.findall(r"[\d]+\.?[\d]*", s)
+    return float(matches[0]) if matches else 0.0
+
+def _parse_midaz_dose(val):
+    s = str(val).lower().strip()
+    if "mcg" in s: return np.nan
+    matches = re.findall(r"[\d]+\.?[\d]*", s)
+    return float(matches[0]) if matches else np.nan
+
+def _get_opioid(val):
+    s = str(val).lower().strip()
+    if "fentanyl" in s and "morphine" in s: return "both"
+    if "fentanyl" in s: return "fentanyl"
+    if "morphine" in s: return "morphine"
+    if "hydro" in s: return "hydromorphone"
+    return "none"
+
+_midaz_mask = df["Premedication"].astype(str).str.lower().str.contains("midazolam", na=False)
+df["Midazolam_dose_mg"] = np.nan
+if "Dose/route" in df.columns:
+    df.loc[_midaz_mask, "Midazolam_dose_mg"] = df.loc[_midaz_mask, "Dose/route"].apply(_parse_midaz_dose)
+df["Midazolam_dose_mg"] = df["Midazolam_dose_mg"].clip(upper=30).fillna(0)
+
+if "Maintenance" in df.columns:
+    df["Maintenance_Agent"] = df["Maintenance"].apply(_get_maintenance)
+else:
+    df["Maintenance_Agent"] = "other"
+
+if "Dexmedetomidine (mcg)" in df.columns:
+    df["Dex_dose_mcg"] = df["Dexmedetomidine (mcg)"].apply(_parse_dex_dose)
+else:
+    df["Dex_dose_mcg"] = 0.0
+
+if "Opioids" in df.columns:
+    df["Opioid_Type"] = df["Opioids"].apply(_get_opioid)
+else:
+    df["Opioid_Type"] = "none"
+
+print(f"[OK] Engineered medication features: Midazolam_dose_mg, Maintenance_Agent, Dex_dose_mcg, Opioid_Type")
 
 
 def find_item_columns(columns, keyword, time_filter=None):
@@ -272,6 +325,11 @@ feature_cols = [
     "Duration of surgery (mins)",
     "Time to emergence (mins)",
     "Airway Device Removed",
+    # Engineered medication features (winner variables from feature importance analysis)
+    "Midazolam_dose_mg",
+    "Dex_dose_mcg",
+    "Maintenance_Agent",
+    "Opioid_Type",
 ]
 
 missing_features = [col for col in feature_cols if col not in df.columns]
@@ -283,7 +341,8 @@ X_encoded = pd.get_dummies(
     X,
     columns=[
         col
-        for col in ["Gender", "Surgery Type", "Airway Device Removed"]
+        for col in ["Gender", "Surgery Type", "Airway Device Removed",
+                    "Maintenance_Agent", "Opioid_Type"]
         if col in X.columns
     ],
 )
@@ -292,53 +351,93 @@ participant_col = "Participant Number"
 participant_ids = df[participant_col] if participant_col in df.columns else df.index
 
 
+# Hyperparameter search space for nested CV inner loop
+_PARAM_DIST = {
+    "max_depth":         [3, 4, 5, 6, 7, None],
+    "class_weight":      [{0:1,1:4},{0:1,1:6},{0:1,1:8},{0:1,1:10},{0:1,1:12},"balanced"],
+    "min_samples_leaf":  [1, 2, 3],
+    "min_samples_split": [2, 4, 6],
+}
+
+
 def generate_oof_correctness(target_series, threshold=0.42):
+    """
+    Nested cross-validation:
+      Outer loop (10-fold) — produces unbiased performance estimate.
+      Inner loop (5-fold RandomizedSearch) — tunes hyperparameters on
+      training data only, never seeing the outer test fold.
+    This prevents the hyperparameter selection from leaking into the
+    reported metrics, which is critical for a publishable performance estimate.
+    """
     if target_series is None:
         print("[WARN] Missing target values for AI correctness.")
-        return pd.Series(pd.NA, index=df.index, dtype="object")
+        return pd.Series(pd.NA, index=df.index, dtype="object"), pd.Series(pd.NA, index=df.index, dtype="object")
     valid_mask = target_series.notna()
     if valid_mask.sum() == 0:
         print("[WARN] Target values are empty; AI correctness not computed.")
-        return pd.Series(pd.NA, index=df.index, dtype="object")
+        return pd.Series(pd.NA, index=df.index, dtype="object"), pd.Series(pd.NA, index=df.index, dtype="object")
     target_valid = target_series[valid_mask]
     if target_valid.nunique() < 2:
         print("[WARN] Target has a single class; AI correctness not computed.")
-        return pd.Series(pd.NA, index=df.index, dtype="object")
+        return pd.Series(pd.NA, index=df.index, dtype="object"), pd.Series(pd.NA, index=df.index, dtype="object")
     min_class = target_valid.value_counts().min()
     if min_class < 2:
         print("[WARN] Not enough samples per class for out-of-fold correctness.")
-        return pd.Series(pd.NA, index=df.index, dtype="object")
+        return pd.Series(pd.NA, index=df.index, dtype="object"), pd.Series(pd.NA, index=df.index, dtype="object")
 
-    n_splits = min(5, int(min_class))
-    cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
-    rf_oof = RandomForestClassifier(
-        n_estimators=300,
-        random_state=42,
-        class_weight="balanced",
-    )
-    oof_probs = cross_val_predict(
-        rf_oof,
-        X_encoded.loc[valid_mask],
-        target_valid,
-        cv=cv,
-        method="predict_proba",
-    )[:, 1]
+    n_outer = min(10, int(min_class))
+    n_inner = min(5, int(min_class))
+    outer_cv = StratifiedKFold(n_splits=n_outer, shuffle=True, random_state=42)
+    inner_cv = StratifiedKFold(n_splits=n_inner, shuffle=True, random_state=42)
+
+    X_valid = X_encoded.loc[valid_mask]
+    oof_probs = np.zeros(len(target_valid))
+
+    print(f"[...] Nested CV: {n_outer} outer folds x {n_inner} inner folds x 10 candidates...")
+    for fold, (tr, te) in enumerate(outer_cv.split(X_valid, target_valid)):
+        rf_base = RandomForestClassifier(n_estimators=300, random_state=42)
+        search = RandomizedSearchCV(
+            rf_base,
+            _PARAM_DIST,
+            n_iter=10,
+            cv=inner_cv,
+            scoring="average_precision",
+            random_state=fold,
+            n_jobs=1,
+        )
+        search.fit(X_valid.iloc[tr], target_valid.iloc[tr])
+        oof_probs[te] = search.best_estimator_.predict_proba(X_valid.iloc[te])[:, 1]
+        print(f"[DIAG]   Outer fold {fold+1:2d}: best={search.best_params_}")
+
     oof_pred = (oof_probs >= threshold).astype(int)
-    print(f"[DIAG] OOF correctness: threshold={threshold}  predicted_positive={oof_pred.sum()}  actual_positive={int(target_valid.sum())}")
-    correctness = np.where(oof_pred == target_valid.astype(int).to_numpy(), "Yes", "No")
+    print(f"[DIAG] Nested CV complete: threshold={threshold}  predicted_positive={oof_pred.sum()}  actual_positive={int(target_valid.sum())}")
+
+    correctness    = np.where(oof_pred == target_valid.astype(int).to_numpy(), "Yes", "No")
     predicted_label = np.where(oof_pred == 1, "Yes", "No")
+
     correctness_series = pd.Series(pd.NA, index=df.index, dtype="object")
-    correctness_series.loc[valid_mask] = pd.Series(
-        correctness, index=target_valid.index, dtype="object"
-    )
+    correctness_series.loc[valid_mask] = pd.Series(correctness, index=target_valid.index, dtype="object")
     predicted_series = pd.Series(pd.NA, index=df.index, dtype="object")
-    predicted_series.loc[valid_mask] = pd.Series(
-        predicted_label, index=target_valid.index, dtype="object"
-    )
+    predicted_series.loc[valid_mask] = pd.Series(predicted_label, index=target_valid.index, dtype="object")
+
     return correctness_series, predicted_series
 
 
 def train_evaluate_target(target_name, y, output_suffix, clinician_pred=None):
+    """
+    Evaluates model performance using nested cross-validation on the full cohort.
+
+    Outer loop (10-fold): produces the reported metrics - every patient is in
+    the test set exactly once, and none of them influenced the hyperparameter
+    search for their fold.
+
+    Inner loop (5-fold RandomizedSearch): tunes hyperparameters on each outer
+    training partition only, preventing tuning leakage into reported metrics.
+
+    A final model is also trained on the full dataset (using the same inner CV
+    tuning) solely for generating feature importance plots - it is NOT used for
+    the reported performance metrics.
+    """
     if y is None or y.isna().all():
         return {
             "available": False,
@@ -350,79 +449,76 @@ def train_evaluate_target(target_name, y, output_suffix, clinician_pred=None):
             "message": f"Target {target_name} has only one class; cannot train.",
         }
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X_encoded,
-        y,
-        test_size=0.3,
-        random_state=42,
-        stratify=y,
-    )
+    threshold = 0.42  # per study protocol
+    n_outer = min(10, int(y.value_counts().min()))
+    n_inner = min(5,  int(y.value_counts().min()))
+    outer_cv = StratifiedKFold(n_splits=n_outer, shuffle=True, random_state=42)
+    inner_cv = StratifiedKFold(n_splits=n_inner, shuffle=True, random_state=42)
 
-    rf = RandomForestClassifier(
-        n_estimators=300,
-        random_state=42,
-        class_weight="balanced",
-    )
-    rf.fit(X_train, y_train)
+    # --- OUTER LOOP: collect out-of-fold predictions across all patients ---
+    oof_probs = np.zeros(len(y))
+    print(f"[...] [{output_suffix}] Nested CV: {n_outer} outer x {n_inner} inner folds, 10 candidates each...")
+    for fold, (tr, te) in enumerate(outer_cv.split(X_encoded, y)):
+        search = RandomizedSearchCV(
+            RandomForestClassifier(n_estimators=300, random_state=42),
+            _PARAM_DIST, n_iter=10, cv=inner_cv,
+            scoring="average_precision", random_state=fold, n_jobs=1,
+        )
+        search.fit(X_encoded.iloc[tr], y.iloc[tr])
+        oof_probs[te] = search.best_estimator_.predict_proba(X_encoded.iloc[te])[:, 1]
+        print(f"[DIAG]   [{output_suffix}] fold {fold+1:2d}: best={search.best_params_}")
 
-    y_probs = rf.predict_proba(X_test)[:, 1]
-
-    # Threshold set to 0.42 per study protocol.
-    threshold = 0.42
-    y_pred = (y_probs >= threshold).astype(int)
-    print(f"[DIAG] [{output_suffix}] classification threshold={threshold:.2f}")
-
-    tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+    y_pred = (oof_probs >= threshold).astype(int)
+    tn, fp, fn, tp = confusion_matrix(y, y_pred).ravel()
     sensitivity = tp / (tp + fn) if (tp + fn) > 0 else 0
     specificity = tn / (tn + fp) if (tn + fp) > 0 else 0
     ppv = tp / (tp + fp) if (tp + fp) > 0 else 0
     npv = tn / (tn + fn) if (tn + fn) > 0 else 0
-    acc = accuracy_score(y_test, y_pred)
+    acc = accuracy_score(y, y_pred)
+    roc_auc = roc_auc_score(y, oof_probs) if len(np.unique(y)) > 1 else None
+    avg_precision = average_precision_score(y, oof_probs)
 
-    print(f"[DIAG] [{output_suffix}] y_test distribution: positive={int(y_test.sum())} negative={int((1-y_test).sum())}")
-    print(f"[DIAG] [{output_suffix}] confusion matrix: TP={tp} FP={fp} TN={tn} FN={fn}")
-    print(f"[DIAG] [{output_suffix}] sensitivity={sensitivity:.2%}  specificity={specificity:.2%}  accuracy={acc:.2%}")
+    print(f"[DIAG] [{output_suffix}] NESTED CV RESULTS: TP={tp} FP={fp} TN={tn} FN={fn}")
+    print(f"[DIAG] [{output_suffix}] sensitivity={sensitivity:.2%}  specificity={specificity:.2%}  accuracy={acc:.2%}  AUC={roc_auc:.3f}")
 
-    roc_auc = None
-    if len(np.unique(y_test)) > 1:
-        roc_auc = roc_auc_score(y_test, y_probs)
-
-    avg_precision = average_precision_score(y_test, y_probs)
+    # --- FINAL MODEL: trained on full cohort for feature importance plot only ---
+    final_inner_cv = StratifiedKFold(n_splits=n_inner, shuffle=True, random_state=42)
+    final_search = RandomizedSearchCV(
+        RandomForestClassifier(n_estimators=300, random_state=42),
+        _PARAM_DIST, n_iter=10, cv=final_inner_cv,
+        scoring="average_precision", random_state=42, n_jobs=1,
+    )
+    final_search.fit(X_encoded, y)
+    rf_final = final_search.best_estimator_
+    print(f"[DIAG] [{output_suffix}] final full-cohort model params: {final_search.best_params_}")
 
     apply_plot_style()
 
-    # Confusion Matrix
+    # Confusion Matrix (from nested CV OOF predictions)
     fig, ax = plt.subplots(figsize=(5.5, 4.5))
-    ConfusionMatrixDisplay.from_predictions(
-        y_test, y_pred, cmap="Blues", ax=ax, colorbar=False
-    )
-    ax.set_title(f"Confusion Matrix ({target_name})")
+    ConfusionMatrixDisplay.from_predictions(y, y_pred, cmap="Blues", ax=ax, colorbar=False)
+    ax.set_title(f"Confusion Matrix — Nested CV ({target_name})")
     save_figure(f"02_Confusion_Matrix_{output_suffix}.png")
 
-    # ROC Curve
+    # ROC Curve (from OOF probabilities)
     fig, ax = plt.subplots(figsize=(6, 5))
-    RocCurveDisplay.from_estimator(rf, X_test, y_test, ax=ax)
+    RocCurveDisplay.from_predictions(y, oof_probs, ax=ax, name="Nested CV")
     ax.plot([0, 1], [0, 1], "k--", label="Random Chance")
-    ax.set_title(f"ROC Curve ({target_name})")
+    ax.set_title(f"ROC Curve — Nested CV ({target_name})")
     ax.legend(loc="lower right")
     save_figure(f"03_ROC_Curve_{output_suffix}.png")
 
-    # Precision-Recall Curve
+    # Precision-Recall Curve (from OOF probabilities)
     fig, ax = plt.subplots(figsize=(6, 5))
-    PrecisionRecallDisplay.from_estimator(rf, X_test, y_test, ax=ax)
-    ax.set_title(f"Precision-Recall Curve ({target_name})")
-    ax.text(
-        0.02,
-        0.02,
-        f"Average Precision: {avg_precision:.2f}",
-        transform=ax.transAxes,
-        fontsize=9,
-        bbox=dict(boxstyle="round", facecolor="white", alpha=0.7),
-    )
+    PrecisionRecallDisplay.from_predictions(y, oof_probs, ax=ax, name="Nested CV")
+    ax.set_title(f"Precision-Recall Curve — Nested CV ({target_name})")
+    ax.text(0.02, 0.02, f"Average Precision: {avg_precision:.2f}",
+            transform=ax.transAxes, fontsize=9,
+            bbox=dict(boxstyle="round", facecolor="white", alpha=0.7))
     save_figure(f"06_Precision_Recall_{output_suffix}.png")
 
-    # Feature Importance (Top 12)
-    importances = rf.feature_importances_
+    # Feature Importance (from final full-cohort model)
+    importances = rf_final.feature_importances_
     indices = np.argsort(importances)[-12:]
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.barh(range(len(indices)), importances[indices], color="#4c78a8")
@@ -433,102 +529,79 @@ def train_evaluate_target(target_name, y, output_suffix, clinician_pred=None):
 
     # Performance Metrics Bar Chart
     fig, ax = plt.subplots(figsize=(7, 4))
-    metrics = {
-        "Accuracy": acc,
-        "Sensitivity": sensitivity,
-        "Specificity": specificity,
-        "PPV": ppv,
-        "NPV": npv,
-    }
-    bars = ax.bar(metrics.keys(), metrics.values(), color="#72b7b2")
+    perf_metrics = {"Accuracy": acc, "Sensitivity": sensitivity,
+                    "Specificity": specificity, "PPV": ppv, "NPV": npv}
+    bars = ax.bar(perf_metrics.keys(), perf_metrics.values(), color="#72b7b2")
     ax.set_ylim(0, 1)
     ax.yaxis.set_major_formatter(mtick.PercentFormatter(1.0))
-    ax.set_title(f"Model Performance Summary ({target_name})")
-    for bar, value in zip(bars, metrics.values()):
-        ax.text(
-            bar.get_x() + bar.get_width() / 2,
-            value + 0.02,
-            f"{value:.0%}",
-            ha="center",
-            va="bottom",
-            fontsize=9,
-        )
+    ax.set_title(f"Model Performance Summary — Nested CV ({target_name})")
+    for bar, value in zip(bars, perf_metrics.values()):
+        ax.text(bar.get_x() + bar.get_width() / 2, value + 0.02,
+                f"{value:.0%}", ha="center", va="bottom", fontsize=9)
     save_figure(f"07_Performance_Summary_{output_suffix}.png")
 
     # Predicted Risk Distribution
     fig, ax = plt.subplots(figsize=(7, 4))
-    ax.hist(y_probs, bins=10, color="#f58518", edgecolor="white")
-    ax.set_title(f"Predicted Risk Distribution ({target_name})")
+    ax.hist(oof_probs, bins=10, color="#f58518", edgecolor="white")
+    ax.set_title(f"Predicted Risk Distribution — Nested CV ({target_name})")
     ax.set_xlabel("Predicted Probability of ED")
     ax.set_ylabel("Patient Count")
     save_figure(f"08_Predicted_Risk_Distribution_{output_suffix}.png")
 
-    clinician_test_metrics = None
-    clinician_pred_test = None
+    # AI vs Clinician (full cohort, apples-to-apples comparison)
+    clinician_metrics_full = None
     if clinician_pred is not None:
-        clinician_pred_test = clinician_pred.loc[X_test.index]
-        clinician_test_metrics = compute_confusion_metrics(y_test, clinician_pred_test)
+        clinician_metrics_full = compute_confusion_metrics(y, clinician_pred)
 
-    if clinician_test_metrics:
+    if clinician_metrics_full:
         fig, ax = plt.subplots(figsize=(7, 4))
-        metrics = ["accuracy", "sensitivity", "specificity"]
-        ai_values = [acc, sensitivity, specificity]
-        clinician_values = [
-            clinician_test_metrics["accuracy"],
-            clinician_test_metrics["sensitivity"],
-            clinician_test_metrics["specificity"],
-        ]
-        x = np.arange(len(metrics))
+        comp_metrics = ["accuracy", "sensitivity", "specificity"]
+        ai_values   = [acc, sensitivity, specificity]
+        clin_values = [clinician_metrics_full["accuracy"],
+                       clinician_metrics_full["sensitivity"],
+                       clinician_metrics_full["specificity"]]
+        x = np.arange(len(comp_metrics))
         width = 0.35
-        ax.bar(x - width / 2, ai_values, width, label="AI", color="#4c78a8")
-        ax.bar(
-            x + width / 2,
-            clinician_values,
-            width,
-            label="Anesthesiologist",
-            color="#f58518",
-        )
+        ax.bar(x - width/2, ai_values,   width, label="AI",               color="#4c78a8")
+        ax.bar(x + width/2, clin_values, width, label="Anesthesiologist", color="#f58518")
         ax.set_xticks(x)
-        ax.set_xticklabels([m.title() for m in metrics])
+        ax.set_xticklabels([m.title() for m in comp_metrics])
         ax.set_ylim(0, 1)
         ax.yaxis.set_major_formatter(mtick.PercentFormatter(1.0))
-        ax.set_title(f"AI vs Anesthesiologist ({target_name})")
+        ax.set_title(f"AI vs Anesthesiologist — Full Cohort ({target_name})")
         ax.legend()
         save_figure(f"09_AI_vs_Anesthesiologist_{output_suffix}.png")
 
-    # Patient Scoreboard
-    scoreboard = X.loc[X_test.index].copy()
-    scoreboard["Actual_Outcome"] = y_test
-    scoreboard["AI_Prediction"] = y_pred
-    scoreboard["AI_Confidence"] = (y_probs * 100).round(2)
-    if clinician_pred_test is not None:
-        scoreboard["Anesthesiologist_Prediction"] = clinician_pred_test
-        scoreboard["Anesthesiologist_Correct"] = (
-            clinician_pred_test == y_test
-        ).astype(int)
+    # Patient Scoreboard (all patients, OOF predictions)
+    scoreboard = X.copy()
+    scoreboard["Actual_Outcome"] = y.values
+    scoreboard["AI_Prediction"]  = y_pred
+    scoreboard["AI_Confidence"]  = (oof_probs * 100).round(2)
+    if clinician_pred is not None:
+        scoreboard["Anesthesiologist_Prediction"] = clinician_pred.values
+        scoreboard["Anesthesiologist_Correct"] = (clinician_pred.values == y.values).astype(int)
     scoreboard.to_csv(f"05_Patient_Scoreboard_{output_suffix}.csv", index=False)
 
     return {
         "available": True,
         "target_name": target_name,
         "output_suffix": output_suffix,
-        "prevalence": y.mean(),
-        "train_n": len(X_train),
-        "test_n": len(X_test),
+        "prevalence": float(y.mean()),
+        "n": len(y),
+        "eval_method": f"Nested CV ({n_outer} outer x {n_inner} inner folds)",
         "accuracy": acc,
         "sensitivity": sensitivity,
         "specificity": specificity,
         "ppv": ppv,
         "npv": npv,
-        "tp": tp,
-        "fp": fp,
-        "tn": tn,
-        "fn": fn,
+        "tp": int(tp),
+        "fp": int(fp),
+        "tn": int(tn),
+        "fn": int(fn),
         "roc_auc": roc_auc,
         "avg_precision": avg_precision,
-        "clinician_test_metrics": clinician_test_metrics,
+        "clinician_test_metrics": clinician_metrics_full,
     }
-
 
 # ==========================================
 # 3. GENERATING ASSETS
@@ -643,8 +716,8 @@ for result in results:
     report_lines.extend(
         [
             f"   Target: {result['target_name']}",
-            f"     Training Set:       {result['train_n']}",
-            f"     Test Set:           {result['test_n']}",
+            f"     Cohort (N):         {result['n']}",
+            f"     Eval Method:        {result['eval_method']}",
             f"     Prevalence:         {result['prevalence']:.2%}",
             f"     Accuracy:           {result['accuracy']:.2%}",
             f"     Sensitivity:        {result['sensitivity']:.2%}",
@@ -710,7 +783,7 @@ report_lines.extend(
         "   - 05_Patient_Scoreboard_[target].csv",
         "",
         "===============================================================",
-        "GENERATED BY SCIKIT-LEARN RANDOM FOREST (n=300, class_weight=balanced)",
+        "GENERATED BY SCIKIT-LEARN RANDOM FOREST — NESTED CV (10 outer x 5 inner folds, RandomizedSearch n_iter=10, threshold=0.42)",
     ]
 )
 
