@@ -292,7 +292,7 @@ participant_col = "Participant Number"
 participant_ids = df[participant_col] if participant_col in df.columns else df.index
 
 
-def generate_oof_correctness(target_series):
+def generate_oof_correctness(target_series, threshold=0.42):
     if target_series is None:
         print("[WARN] Missing target values for AI correctness.")
         return pd.Series(pd.NA, index=df.index, dtype="object")
@@ -323,13 +323,19 @@ def generate_oof_correctness(target_series):
         cv=cv,
         method="predict_proba",
     )[:, 1]
-    oof_pred = (oof_probs >= 0.5).astype(int)
+    oof_pred = (oof_probs >= threshold).astype(int)
+    print(f"[DIAG] OOF correctness: threshold={threshold}  predicted_positive={oof_pred.sum()}  actual_positive={int(target_valid.sum())}")
     correctness = np.where(oof_pred == target_valid.astype(int).to_numpy(), "Yes", "No")
+    predicted_label = np.where(oof_pred == 1, "Yes", "No")
     correctness_series = pd.Series(pd.NA, index=df.index, dtype="object")
     correctness_series.loc[valid_mask] = pd.Series(
         correctness, index=target_valid.index, dtype="object"
     )
-    return correctness_series
+    predicted_series = pd.Series(pd.NA, index=df.index, dtype="object")
+    predicted_series.loc[valid_mask] = pd.Series(
+        predicted_label, index=target_valid.index, dtype="object"
+    )
+    return correctness_series, predicted_series
 
 
 def train_evaluate_target(target_name, y, output_suffix, clinician_pred=None):
@@ -796,10 +802,14 @@ with open("dashboard_summary.json", "w") as f:
 
 # Write AI correctness back to Excel (Column Z)
 ai_correct_col = "AI Correct?"
-if ai_correct_col in df.columns:
-    df.drop(columns=[ai_correct_col], inplace=True)
+ai_predicted_col = "AI Predicted ED?"
+for col in [ai_correct_col, ai_predicted_col]:
+    if col in df.columns:
+        df.drop(columns=[col], inplace=True)
 
-df.insert(len(base_columns), ai_correct_col, generate_oof_correctness(df["ED_Target_PAED12_5min"]))
+oof_correctness, oof_predicted = generate_oof_correctness(df["ED_Target_PAED12_5min"])
+df.insert(len(base_columns), ai_correct_col, oof_correctness)
+df.insert(len(base_columns) + 1, ai_predicted_col, oof_predicted)
 
 output_columns = base_columns + [col for col in df.columns if col not in base_columns]
 output_df = df[output_columns]
