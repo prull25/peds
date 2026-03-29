@@ -1,0 +1,93 @@
+Participant Number ,Age,Gender,Surgery Type ,Weight (kg),Preop mYPAS score ,Duration of surgery (mins),Premedication,Dose/route,Induction,Dose/route.1,Maintenance ,Dose/Route ,Opioids ,Dose/Route .1,Dexmedetomidine (mcg),Time to emergence (mins) ,Airway Device Removed,Anesthesiologist prediction of ED ,PAED score at awaking ,PAED score at 5 mins,Disposition ,Anesthesiologist ,Notes,ED? If PAED>12 
+,7,Male,T&A,26.2,43.75,25,Midazolam ,30 mg ,Propofol ,100 mg IV ,Propofol bolus ,40mg IV,Fentanyl ,25 mcg IV ,8 mcg IV ,49.0,Deep ,Yes ,8.0,6,Home ,10.0,,0
+,8,female ,T&A,32.7,39.58,22,Midazolam ,11 mg oral,Propofol ,200 mg IV ,Sevoflourane ,,Fentanyl ,20 mcg IV,8 mcg IV ,54.0,Deep ,No,10.0,1,Home ,1.0,,0
+,2,female ,Tubes +A,18.0,22.92,18,Midazolam ,3.2 mg Nasal ,Propofol ,70 mg IV,Sevoflourane ,,Fentanyl ,15 mcg IV,4 mcg IV,27.0,Deep ,Yes ,15.0,6,Home ,22.0,,1
+,3,Male,Adenoidectomy,14.2,39.58,8,Midazolam ,8 mg oral ,Propofol ,50 mg IV ,Propofol infusion ,37485 mcg ,Morphine ,1 mg IV ,4 mcg IV,28.0,Awake  ,No,19.0,12,Home ,26.0,,1
+,7,female ,T&A,42.5,22.92,30,Propofol ,25 mg IV ,Propofol ,170 mg IV ,Sevoflourane ,,Fentanyl ,20 mcg IV,12 mcg IV,45.0,Deep ,No,7.0,2,Home ,24.0,,0
+,16 months ,Male,Tubes,10.7,43.75,9,Midazolam  ,3.4 mg IN,,,,,,,30 mcg IM ,6.0,Awake,Yes ,19.0,16,Home ,8.0,,1
+,8,Male,T&A,39.0,43.75,31,Midazolam ,20 mg oral ,Propofol ,100 mg IV ,Sevoflourane ,,Morphine ,1 mg IV ,,16.0,Deep ,Yes ,16.0,11,Home ,7.0,,1
+,4,female ,Tubes +A,20.0,27.08,19,,,Propofol ,20 mg IV,Sevoflourane ,,Morphine ,1 mg IV ,8mcg IV,25.0,Deep ,No,11.0,5,Home ,3.0,,0
+,8,Male,T&A,37.0,33.33,19,Midazolam ,20 mg oral ,Propofol ,80 mg IV,Sevoflourane ,,Fentanyl ,50 mcg IV,20 mcg IV,60.0,Deep ,No,8.0,6,Home ,2.0,,0
+,5,Male,T&A,18.0,37.5,23,Midazolam ,8 mg nasal,Propofol ,100 mg IV ,Sevoflourane ,,Morphine ,2 mg IV,16 mcg IV ,54.0,Deep ,No ,8.0,3,Home ,1.0,,0
+,7,female ,T&A,30.3,54.16,21,,,Propofol ,80 mg IV,Sevoflourane ,,Morphine ,2 mg IV ,16 mcg IV ,49.0,Deep ,Yes ,19.0,18,Home ,5.0,,1
+,17 months ,female ,Tubes,9.2,22.92,6,Midazolam ,3.2 mg Nasal ,,,,,,,30 mcg IM ,8.0,Deep ,No,17.0,10,Home ,9.0,,1
+,6,Male,T&A,35.0,33.33,25,,,Propofol ,200 mg IV ,Sevoflourane ,,Fentanyl ,20 mcg IV,8 mcg iV,86.0,Deep ,No,12.0,10,Home ,1.0,,0
+,8,Male,T&A,33.5,45.83,29,,,Propofol ,80 mg IV,Sevoflourane ,,Hydromorphone,0.3mg IV ,16 mcg IV ,46.0,Deep ,No,13.0,7,Home ,22.0,,1
+,8,Male,T&A,40.2,39.58,30,Midazolam ,1mg IV,Propofol ,100 mg IV ,Sevoflourane ,,Fentanyl ,50 mcg IV,12 mcg IV,68.0,Deep ,Yes ,11.0,6,Home ,26.0,,0
+,2,female ,Tubes +A,16.0,43.75,19,Midazolam ,9mg oral ,Propofol ,40mg IV,Sevoflourane ,,Fentanyl ,20 mcg IV,13.3 mcg,30.0,Deep ,No,11.0,9,Home ,22.0,,0
+,7,Male,Tubes +A,45.1,22.92,17,Midazolam ,15 mg oral ,Propofol ,200 mg IV ,Sevoflourane ,,Fentanyl ,40mcg IV,12 mcg IV,60.0,Deep ,No,12.0,6,Home ,5.0,,0
+,8,female ,Tubes +A,28.7,35.42,18,,,Propofol ,80 mg IV ,Sevoflourane ,,Morphine ,2 mg IV,16 mcg IV ,40.0,Deep ,No,8.0,6,Home ,2.0,,0
+,20 months ,Male,Tubes,14.0,29.16,5,,,Propofol ,60 mg IV,Propofol bolus ,40 mg IV,Morphine ,1 mg IV ,8 mcg IV ,30.0,Awake ,No,14.0,12,Home ,3.0,,1
+,3,female ,Adenoidectomy,14.7,50.0,14,Midazolam ,10 mg nasal,Sevoflourane ,,Propofol bolus ,70 mg IV ,Morphine ,1 mg IV ,,33.0,Deep ,Yes ,12.0,8,Home ,4.0,,0
+,4,Male,Tubes +A,19.0,43.75,16,Midazolam ,10 mg oral ,Propofol ,60 mg IV,Sevoflourane ,,Fentanyl ,10 mcg IV,,45.0,Deep ,Yes ,17.0,17,Home ,2.0,,1
+,6,female ,Adenoidectomy,47.2,33.33,8,Midazolam ,20 mg oral ,Propofol ,80 mg IV ,Sevoflourane ,,Fentanyl ,50 mcg IV,12 mcg IV ,68.0,Deep ,No,11.0,7,Home ,15.0,,0
+,8,female ,T&A,25.2,22.92,29,Midazolam ,11 mg oral ,Propofol ,30 mg IV,Sevoflourane ,,Morphine ,2 mg IV,12 mcg ,38.0,Deep ,No,4.0,5,Continued care in hospital ,16.0,,0
+,7,Male,T&A,40.5,22.92,27,Propofol ,25 mg IV ,Propofol ,170 mg IV ,Sevoflourane ,,Fentanyl ,20 mcg IV ,12 mcg IV ,45.0,Deep ,No,7.0,2,Home ,18.0,,0
+,5,Male,T&A,19.5,22.92,20,Dexmedetamine,27 mcg nasal,Sevoflourane ,,Sevoflourane ,,Fentanyl ,20 mcg IV,,18.0,Awake,No,16.0,5,Home ,21.0,,1
+,6,Male,T&A,44.1,22.92,26,Midazolam,20 mg oral ,Propofol ,50 mg IV ,Sevoflourane ,,Fentanyl ,25 mcg IV ,12 mcg IV ,25.0,Deep ,No ,15.0,8,Home ,22.0,,1
+,22 months ,female ,Tubes,13.2,27.08,8,Midazolam ,6.6 mg oral ,,,Sevoflourane ,,,,4 mcg IV,31.0,Awake,No,7.0,3,Home ,3.0,,0
+,3,Male,Tubes + T&A,15.0,50.0,37,,,Propofol ,50 mg IV ,Sevoflourane ,,Fentanyl,20 mcg IV,13 mcg IV,21.0,Deep ,No ,16.0,10,Home ,4.0,,1
+,8,Male,T&A,33.3,22.92,30,,,Propofol ,80 mg IV,Sevoflourane ,,Morphine ,2 mg IV ,16 mcg IV ,49.0,Deep ,Yes ,19.0,18,Home ,9.0,,1
+,8,Male,T&A,39.18023178842831,44.04623791368295,32,Midazolam ,20 mg oral ,Propofol ,100 mg IV ,Sevoflourane ,,Morphine ,1 mg IV ,,17.55425701065641,Deep ,Yes ,16.37293184653641,11,Home ,7.715962881644729,,1
+,3,female ,Adenoidectomy,14.08487794791222,50.35940677603523,13,Midazolam ,10 mg nasal,Sevoflourane ,,Propofol bolus ,70 mg IV ,Morphine ,1 mg IV ,,34.62273560114453,Deep ,Yes ,11.78710537744018,8,Home ,3.795733263143446,,0
+,8,Male,T&A,33.74387128301886,23.32090511263333,30,,,Propofol ,80 mg IV,Sevoflourane ,,Morphine ,2 mg IV ,16 mcg IV ,48.83099262521114,Deep ,Yes ,18.94708622395727,18,Home ,9.048145977132895,,1
+,8,Male,T&A,40.75631821197673,39.40377746065682,30,Midazolam ,1mg IV,Propofol ,100 mg IV ,Sevoflourane ,,Fentanyl ,50 mcg IV,12 mcg IV,67.63925040660901,Deep ,Yes ,11.16769499198486,6,Home ,26.58443954056381,,0
+,7,female ,T&A,29.14601624030715,53.92635804690528,21,,,Propofol ,80 mg IV,Sevoflourane ,,Morphine ,2 mg IV ,16 mcg IV ,50.37586868121574,Deep ,Yes ,19.09379206102752,18,Home ,4.284927387029546,,1
+,4,female ,Tubes +A,19.22979656550389,27.51356414700984,18,,,Propofol ,20 mg IV,Sevoflourane ,,Morphine ,1 mg IV ,8mcg IV,23.95777793879377,Deep ,No,10.91885187170602,5,Home ,2.441402206713306,,0
+,8,Male,T&A,33.37561408935398,22.82332747312773,30,,,Propofol ,80 mg IV,Sevoflourane ,,Morphine ,2 mg IV ,16 mcg IV ,48.15766417498531,Deep ,Yes ,18.97113037931911,18,Home ,8.285365467175954,,1
+,4,Male,Tubes +A,18.81295118724155,43.10535267982159,16,Midazolam ,10 mg oral ,Propofol ,60 mg IV,Sevoflourane ,,Fentanyl ,10 mcg IV,,45.60565646826097,Deep ,Yes ,16.70339380384423,17,Home ,1.64558481481231,,1
+,8,Male,T&A,38.99006257651489,43.17731175200797,30,Midazolam ,20 mg oral ,Propofol ,100 mg IV ,Sevoflourane ,,Morphine ,1 mg IV ,,15.62850118005058,Deep ,Yes ,15.948618791479,11,Home ,7.19620547643253,,1
+,6,Male,T&A,43.59544793223144,22.45536975245455,26,Midazolam,20 mg oral ,Propofol ,50 mg IV ,Sevoflourane ,,Fentanyl ,25 mcg IV ,12 mcg IV ,24.9951780467809,Deep ,No ,14.94253224161858,8,Home ,22.2339398585823,,1
+,,Male,Tubes,14.52013976334208,29.41123209012194,5,,,Propofol ,60 mg IV,Propofol bolus ,40 mg IV,Morphine ,1 mg IV ,8 mcg IV ,29.84612758321292,Awake ,No,14.05008599735684,12,Home ,3.123298438390433,,1
+,8,female ,T&A,25.66004258002356,22.99197252757409,29,Midazolam ,11 mg oral ,Propofol ,30 mg IV,Sevoflourane ,,Morphine ,2 mg IV,12 mcg ,38.31780770004951,Deep ,No,3.880199290016783,5,Continued care in hospital ,15.36949653522252,,0
+,7,female ,T&A,30.33905534511626,54.5089255352033,22,,,Propofol ,80 mg IV,Sevoflourane ,,Morphine ,2 mg IV ,16 mcg IV ,50.32506604777231,Deep ,Yes ,19.10172497920322,18,Home ,3.969023645461831,,1
+,7,female ,T&A,30.96673223202868,53.94409482922157,22,,,Propofol ,80 mg IV,Sevoflourane ,,Morphine ,2 mg IV ,16 mcg IV ,49.08528066177995,Deep ,Yes ,19.21847312696839,18,Home ,5.024257468489609,,1
+,7,Male,T&A,40.77651894317487,23.00011545246256,27,Propofol ,25 mg IV ,Propofol ,170 mg IV ,Sevoflourane ,,Fentanyl ,20 mcg IV ,12 mcg IV ,45.60623263096138,Deep ,No,7.033530760200257,2,Home ,17.78945101435461,,0
+,4,Male,Tubes +A,18.49175209511321,44.06613192335963,16,Midazolam ,10 mg oral ,Propofol ,60 mg IV,Sevoflourane ,,Fentanyl ,10 mcg IV,,43.06987676513955,Deep ,Yes ,17.07588439039057,17,Home ,2.205019334087252,,1
+,3,Male,Adenoidectomy,14.41810596686306,39.42367676113724,7,Midazolam ,8 mg oral ,Propofol ,50 mg IV ,Propofol infusion ,37485 mcg ,Morphine ,1 mg IV ,4 mcg IV,27.95413432877986,Awake  ,No,19.01146720017213,12,Home ,26.31327497251437,,1
+,4,female ,Tubes +A,19.43284726218998,27.31082393173642,19,,,Propofol ,20 mg IV,Sevoflourane ,,Morphine ,1 mg IV ,8mcg IV,24.2061455054376,Deep ,No,11.00001820611691,5,Home ,3.061695786175596,,0
+,7,Male,T&A,41.01957924044687,22.58550649931821,27,Propofol ,25 mg IV ,Propofol ,170 mg IV ,Sevoflourane ,,Fentanyl ,20 mcg IV ,12 mcg IV ,43.85255515588571,Deep ,No,6.844338325615731,2,Home ,18.33923989068948,,0
+,2,female ,Tubes +A,17.97047019407899,22.73653664777385,18,Midazolam ,3.2 mg Nasal ,Propofol ,70 mg IV,Sevoflourane ,,Fentanyl ,15 mcg IV,4 mcg IV,26.17326828986479,Deep ,Yes ,15.06827728944155,6,Home ,22.10229477310691,,1
+,6,female ,Adenoidectomy,47.09065898629083,33.13709496850866,8,Midazolam ,20 mg oral ,Propofol ,80 mg IV ,Sevoflourane ,,Fentanyl ,50 mcg IV,12 mcg IV ,67.68544132666528,Deep ,No,10.97901236754328,7,Home ,15.23656264441862,,0
+,4,Male,Tubes +A,18.59724886547056,43.14570189882183,16,Midazolam ,10 mg oral ,Propofol ,60 mg IV,Sevoflourane ,,Fentanyl ,10 mcg IV,,45.86227140491282,Deep ,Yes ,17.45155908269279,17,Home ,1.685511280502182,,1
+,8,female ,T&A,33.42309964401841,39.82608361710553,22,Midazolam ,11 mg oral,Propofol ,200 mg IV ,Sevoflourane ,,Fentanyl ,20 mcg IV,8 mcg IV ,52.75127487991308,Deep ,No,10.33941976547261,1,Home ,0.919841199433335,,0
+,7,Male,T&A,40.4086000530702,22.68279516746297,27,Propofol ,25 mg IV ,Propofol ,170 mg IV ,Sevoflourane ,,Fentanyl ,20 mcg IV ,12 mcg IV ,45.02883785002498,Deep ,No,7.083238655290748,2,Home ,18.08781922903303,,0
+,,female ,Tubes,8.946655850455533,22.92631369954232,6,Midazolam ,3.2 mg Nasal ,,,,,,,30 mcg IM ,7.544181353157427,Deep ,No,16.83538571065605,10,Home ,9.366193756940042,,1
+,,Male,Tubes,10.49172267067783,43.99293749935133,9,Midazolam  ,3.4 mg IN,,,,,,,30 mcg IM ,5.691513969705966,Awake,Yes ,18.7600195351121,15,Home ,7.824277202512024,,1
+,8,female ,T&A,33.01484627178238,39.80564726197787,21,Midazolam ,11 mg oral,Propofol ,200 mg IV ,Sevoflourane ,,Fentanyl ,20 mcg IV,8 mcg IV ,54.94404083275995,Deep ,No,10.2569652029213,1,Home ,1.232591800392529,,0
+,3,Male,Tubes + T&A,15.2161501329165,50.33624153488106,37,,,Propofol ,50 mg IV ,Sevoflourane ,,Fentanyl,20 mcg IV,13 mcg IV,21.50660581493429,Deep ,No ,16.05668287570544,10,Home ,3.881358771976351,,1
+,4,Male,Tubes +A,19.24412001057039,43.7002319633722,16,Midazolam ,10 mg oral ,Propofol ,60 mg IV,Sevoflourane ,,Fentanyl ,10 mcg IV,,46.25908608361975,Deep ,Yes ,17.10358130966892,17,Home ,1.947542091295654,,1
+,7,Male,T&A,26.45481879757828,43.53609308769471,26,Midazolam ,30 mg ,Propofol ,100 mg IV ,Propofol bolus ,40mg IV,Fentanyl ,25 mcg IV ,8 mcg IV ,48.85454147908453,Deep ,Yes ,7.623640562206271,6,Home ,10.37020615804658,,0
+,,female ,Tubes,10.46672576935677,22.87971569962766,6,Midazolam ,3.2 mg Nasal ,,,,,,,30 mcg IM ,7.344808660580462,Deep ,No,17.20007625196675,10,Home ,8.110516835246516,,1
+,6,Male,T&A,43.85961667358406,22.06733300718498,26,Midazolam,20 mg oral ,Propofol ,50 mg IV ,Sevoflourane ,,Fentanyl ,25 mcg IV ,12 mcg IV ,24.7892493495682,Deep ,No ,15.09803207425105,8,Home ,21.42139720093811,,1
+,6,female ,Adenoidectomy,46.89702248641802,32.59872526554697,8,Midazolam ,20 mg oral ,Propofol ,80 mg IV ,Sevoflourane ,,Fentanyl ,50 mcg IV,12 mcg IV ,68.22829726878847,Deep ,No,10.76044685030402,7,Home ,14.33851529175128,,0
+,8,Male,T&A,32.81867576866877,22.25159527941462,29,,,Propofol ,80 mg IV,Sevoflourane ,,Morphine ,2 mg IV ,16 mcg IV ,49.1662340159821,Deep ,Yes ,18.89827797955351,18,Home ,7.958530167099482,,1
+,,female ,Tubes,9.564334920298158,22.41605754705625,6,Midazolam ,3.2 mg Nasal ,,,,,,,30 mcg IM ,6.97910882078115,Deep ,No,17.05689169780636,10,Home ,8.697297277327388,,1
+,5,Male,T&A,20.16775612173454,23.12201939867109,20,Dexmedetamine,27 mcg nasal,Sevoflourane ,,Sevoflourane ,,Fentanyl ,20 mcg IV,,18.08519110661469,Awake,No,16.01131865948691,5,Home ,21.3344649497751,,1
+,7,Male,Tubes +A,45.03260320656608,22.46243089712821,18,Midazolam ,15 mg oral ,Propofol ,200 mg IV ,Sevoflourane ,,Fentanyl ,40mcg IV,12 mcg IV,60.21486430462739,Deep ,No,11.936969926361,6,Home ,4.872859054028661,,0
+,,female ,Tubes,12.7030705055174,26.88890170836398,8,Midazolam ,6.6 mg oral ,,,Sevoflourane ,,,,4 mcg IV,33.37006206969579,Awake,No,6.977674481694591,3,Home ,3.088271760653912,,0
+,,female ,Tubes,12.71234199228566,27.73654387379199,8,Midazolam ,6.6 mg oral ,,,Sevoflourane ,,,,4 mcg IV,32.76694502409608,Awake,No,6.945640934234969,3,Home ,3.486107014192827,,0
+,5,Male,T&A,18.38480777573315,37.31996780084626,23,Midazolam ,8 mg nasal,Propofol ,100 mg IV ,Sevoflourane ,,Morphine ,2 mg IV,16 mcg IV ,53.19671874616012,Deep ,No ,8.032912302237891,3,Home ,1.592533211677957,,0
+,3,Male,Tubes + T&A,15.4396144405189,50.37269148857703,37,,,Propofol ,50 mg IV ,Sevoflourane ,,Fentanyl,20 mcg IV,13 mcg IV,20.72944451679963,Deep ,No ,16.31744488136937,10,Home ,3.969144422377833,,1
+,3,Male,Tubes + T&A,15.32126084054102,49.5282115011512,37,,,Propofol ,50 mg IV ,Sevoflourane ,,Fentanyl,20 mcg IV,13 mcg IV,19.622250586087,Deep ,No ,15.44629491750485,10,Home ,4.604092017635693,,1
+,2,female ,Tubes +A,15.60636927586171,43.64618547387352,19,Midazolam ,9mg oral ,Propofol ,40mg IV,Sevoflourane ,,Fentanyl ,20 mcg IV,13.3 mcg,29.44388213454247,Deep ,No,10.94890430563026,9,Home ,22.04111521802965,,0
+,8,Male,T&A,40.33731704994653,39.09992181729594,30,Midazolam ,1mg IV,Propofol ,100 mg IV ,Sevoflourane ,,Fentanyl ,50 mcg IV,12 mcg IV,68.29712459269228,Deep ,Yes ,11.03807901483066,6,Home ,25.62627744091112,,0
+,8,Male,T&A,40.26901645317219,39.40867515326239,30,Midazolam ,1mg IV,Propofol ,100 mg IV ,Sevoflourane ,,Fentanyl ,50 mcg IV,12 mcg IV,69.13524425112726,Deep ,Yes ,11.06385476690786,6,Home ,25.73472499173486,,0
+,,Male,Tubes,14.12934830213361,29.58463604024429,5,,,Propofol ,60 mg IV,Propofol bolus ,40 mg IV,Morphine ,1 mg IV ,8 mcg IV ,29.31360803579247,Awake ,No,13.91976688808779,12,Home ,2.339251172791678,,1
+,,female ,Tubes,9.71542620211532,22.04712673834521,6,Midazolam ,3.2 mg Nasal ,,,,,,,30 mcg IM ,7.384157436177601,Deep ,No,16.62102250771809,10,Home ,8.603634630231554,,1
+,8,female ,T&A,25.33225062957661,23.13952891750161,28,Midazolam ,11 mg oral ,Propofol ,30 mg IV,Sevoflourane ,,Morphine ,2 mg IV,12 mcg ,35.97844656740024,Deep ,No,4.070758447431775,5,Continued care in hospital ,15.84022068705597,,0
+,3,female ,Adenoidectomy,15.10155873690865,50.1201358172074,13,Midazolam ,10 mg nasal,Sevoflourane ,,Propofol bolus ,70 mg IV ,Morphine ,1 mg IV ,,32.84685906485324,Deep ,Yes ,12.37264116548549,8,Home ,4.358632059804247,,1
+,5,Male,T&A,19.53997116460987,22.61975599038966,20,Dexmedetamine,27 mcg nasal,Sevoflourane ,,Sevoflourane ,,Fentanyl ,20 mcg IV,,16.99979580233801,Awake,No,15.66910016455596,5,Home ,21.7679625853121,,1
+,2,female ,Tubes +A,18.17100618822288,22.18925819960561,19,Midazolam ,3.2 mg Nasal ,Propofol ,70 mg IV,Sevoflourane ,,Fentanyl ,15 mcg IV,4 mcg IV,26.5015621665632,Deep ,Yes ,15.18635356927852,6,Home ,21.38314603691052,,1
+,7,female ,T&A,42.87338965721353,22.95644947272921,30,Propofol ,25 mg IV ,Propofol ,170 mg IV ,Sevoflourane ,,Fentanyl ,20 mcg IV,12 mcg IV,44.17448424899161,Deep ,No,6.929127271915076,2,Home ,24.17531502043018,,0
+,,Male,Tubes,13.13813233034737,28.89242947760163,5,,,Propofol ,60 mg IV,Propofol bolus ,40 mg IV,Morphine ,1 mg IV ,8 mcg IV ,29.91125703737328,Awake ,No,13.98677050229021,12,Home ,2.535615513955873,,1
+,8,Male,T&A,38.81092325025049,43.86757913632452,31,Midazolam ,20 mg oral ,Propofol ,100 mg IV ,Sevoflourane ,,Morphine ,1 mg IV ,,14.34519628521666,Deep ,Yes ,15.77285826293396,11,Home ,7.211852623572154,,1
+,4,Male,Tubes +A,18.72178748634871,43.76104262607047,17,Midazolam ,10 mg oral ,Propofol ,60 mg IV,Sevoflourane ,,Fentanyl ,10 mcg IV,,43.61885833228503,Deep ,Yes ,16.92784778856741,17,Home ,1.941497322106213,,1
+,8,Male,T&A,36.62212128946325,34.13943289186211,19,Midazolam ,20 mg oral ,Propofol ,80 mg IV,Sevoflourane ,,Fentanyl ,50 mcg IV,20 mcg IV,62.00456796852253,Deep ,No,8.280458547999855,6,Home ,1.182884807709519,,0
+,8,Male,T&A,38.83726091083985,43.62904552945557,31,Midazolam ,20 mg oral ,Propofol ,100 mg IV ,Sevoflourane ,,Morphine ,1 mg IV ,,14.78796310029222,Deep ,Yes ,16.12569618289918,11,Home ,7.414289781626007,,1
+,8,female ,Tubes +A,29.58421675062084,34.90279220074916,18,,,Propofol ,80 mg IV ,Sevoflourane ,,Morphine ,2 mg IV,16 mcg IV ,38.96743725681831,Deep ,No,8.373711486142577,6,Home ,1.729994155459227,,0
+,3,Male,Adenoidectomy,13.68788466145701,39.67059402419983,8,Midazolam ,8 mg oral ,Propofol ,50 mg IV ,Propofol infusion ,37485 mcg ,Morphine ,1 mg IV ,4 mcg IV,29.72935212593101,Awake  ,No,19.25400300122544,12,Home ,25.76172559517604,,1
+,5,Male,T&A,20.0727100682544,23.03117174353602,21,Dexmedetamine,27 mcg nasal,Sevoflourane ,,Sevoflourane ,,Fentanyl ,20 mcg IV,,20.73495948918696,Awake,No,16.09472414478765,5,Home ,20.52258006123851,,1
+,3,Male,Tubes + T&A,14.00462872355338,50.68684331874461,37,,,Propofol ,50 mg IV ,Sevoflourane ,,Fentanyl,20 mcg IV,13 mcg IV,19.89703504874262,Deep ,No ,16.37621889819025,11,Home ,3.707999833800562,,1
+,8,Male,T&A,33.30192469709658,46.25200987568876,28,,,Propofol ,80 mg IV,Sevoflourane ,,Hydromorphone,0.3mg IV ,16 mcg IV ,45.6533140474635,Deep ,No,13.094703969682,7,Home ,22.19096327882721,,1
+,8,female ,Tubes +A,28.79626397056477,35.60033898123796,17,,,Propofol ,80 mg IV ,Sevoflourane ,,Morphine ,2 mg IV,16 mcg IV ,40.32155559259357,Deep ,No,8.17862184326017,6,Home ,1.915542119178874,,0
